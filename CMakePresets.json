@@ -1,0 +1,12 @@
+{
+    "version": 6,
+    "configurePresets": [
+        {
+            "name": "debug",
+            "binaryDir": "${sourceDir}/build",
+            "cacheVariables": {
+                "CMAKE_BUILD_TYPE": "Debug" 
+            }
+        }
+    ]
+}
