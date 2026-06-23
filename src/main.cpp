@@ -2,47 +2,42 @@
 
 #include <SDL3/SDL.h>
 #include <SDL3/SDL_main.h>
+#include <SDL3_image/SDL_image.h>
 
-// Custom Deletor struct for std::unique_ptr
-struct SDL_Deleter {
-	void operator()(SDL_Window *w) const {
-		SDL_DestroyWindow(w);
-	}
-	
-	void operator()(SDL_Renderer *r) const {
-		SDL_DestroyRenderer(r);
-	}
-};
-
-// Using Alias instead of all this nonsense
-using Window = std::unique_ptr<SDL_Window, SDL_Deleter>;
-using Renderer = std::unique_ptr<SDL_Renderer, SDL_Deleter>;
-
-struct SDL_State {
-	int width{};
-	int height{};
-
-	Window window{};
-	Renderer renderer{};
-};
+#include "Player.h"
+#include "SDL_Context.h"
 
 bool initialize(SDL_State& state);
 void cleanup();
 
 int main() {
-	SDL_State s{
-		.width {1280},
-		.height {720},
-	};
+	SDL_State state{};
 
-	if(!initialize(s)) {
+	if(!initialize(state)) {
 		cleanup();
 		return 1;
 	}
 
+	SDL_SetRenderLogicalPresentation(
+		state.renderer.get(), 
+		Config::logicalWidth, 
+		Config::logicalHeight, 
+		SDL_LOGICAL_PRESENTATION_LETTERBOX
+	);
+	
+	Player player {state.renderer.get()};
+	auto* keyboardState {SDL_GetKeyboardState(NULL)};
 
+	Uint64 PerfCountFrequency {SDL_GetPerformanceFrequency()};
+	Uint64 previousTime {SDL_GetPerformanceCounter()};
 	bool running = true;
 	while(running) {
+		// Calculate DeltaTime
+		Uint64 currentTime {SDL_GetPerformanceCounter()};
+		double deltaTime = static_cast<double> (currentTime - previousTime) / static_cast<double> (PerfCountFrequency);
+		previousTime = currentTime;
+
+		// Handle SDL_Events
 		SDL_Event event{};
 		while(SDL_PollEvent(&event)) {
 			switch(event.type) {
@@ -51,15 +46,33 @@ int main() {
 					running = false;
 					break;
 				}
+				case SDL_EVENT_WINDOW_PIXEL_SIZE_CHANGED:
+				{
+					state.width = event.window.data1;
+					state.height = event.window.data2;
+					break;
+				}
 			}
-
-			// Preform Drawing Commands
-			SDL_SetRenderDrawColor(s.renderer.get(), 255, 255, 255, 255);
-			SDL_RenderClear(s.renderer.get());
-
-			// Swap buffers and present
-			SDL_RenderPresent(s.renderer.get());
 		}
+		player.move(keyboardState, deltaTime);
+		
+		// Preform Drawing Commands
+		SDL_SetRenderDrawColor(state.renderer.get(), 20, 10, 30, 255);
+		SDL_RenderClear(state.renderer.get());
+
+		// Render player with correct orientation
+		SDL_RenderTextureRotated(
+			state.renderer.get(), 
+			player.texture(), 
+			&player.sourceRect(),
+			&player.destinationRect(),
+			player.angle(),
+			NULL,
+			player.flipMode()
+		);
+
+		// Swap buffers and present
+		SDL_RenderPresent(state.renderer.get());
 	}
 
 

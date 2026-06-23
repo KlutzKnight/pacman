@@ -1,10 +1,12 @@
 find_package(SDL3 REQUIRED)
+find_package(SDL3_image REQUIRED)
 
 add_executable(pacman)
 
 target_sources(pacman
   PRIVATE
     main.cpp
+    entities/Player.cpp
 )
 
 set(CMAKE_CXX_STANDARD 20)
@@ -21,4 +23,9 @@ target_compile_options(pacman
     -Wshadow
 )
 
-target_link_libraries(pacman PRIVATE SDL3::SDL3)
+target_link_libraries(pacman PRIVATE SDL3::SDL3 SDL3_image::SDL3_image)
+target_include_directories(pacman
+  PRIVATE
+    ${PROJECT_SOURCE_DIR}/include/core
+    ${PROJECT_SOURCE_DIR}/include/entities
+)
