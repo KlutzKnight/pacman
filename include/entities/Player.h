@@ -26,7 +26,7 @@ class Player : public Entity {
             up,
             down,
         };
-        constexpr static int s_textureWidth {1192};
+        constexpr static int s_textureWidth {2116};
     	constexpr static int s_textureHeight {136};
         constexpr static int s_speed {100};
         

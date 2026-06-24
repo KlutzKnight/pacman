@@ -6,9 +6,9 @@
 
 #include <SDL3/SDL.h>
 
-namespace Config {
-    constexpr static int logicalWidth{1280};
-    constexpr static int logicalHeight{704};
+namespace Game {
+    constexpr static int g_logicalWidth{1280};
+    constexpr static int g_logicalHeight{704};
 }
 
 // Custom Deletor struct for std::unique_ptr
@@ -32,8 +32,8 @@ using Renderer  = std::unique_ptr<SDL_Renderer, SDL_Deleter>;
 using Texture   = std::unique_ptr<SDL_Texture,  SDL_Deleter>;
 
 struct SDL_State {
-	int width{1280};
-	int height{720};
+	int width{Game::g_logicalWidth};
+	int height{Game::g_logicalHeight};
 
 	Window window{};
 	Renderer renderer{};

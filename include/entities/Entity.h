@@ -27,8 +27,8 @@ class Entity {
 
         // Rectangle on the screen
         SDL_FRect m_dst {
-            .x = (static_cast<float> (Config::logicalWidth) - s_entitySize)/2,
-	    	.y = (static_cast<float> (Config::logicalHeight) - s_entitySize)/2,
+            .x = (static_cast<float> (Game::g_logicalWidth) - s_entitySize)/2,
+	    	.y = (static_cast<float> (Game::g_logicalHeight) - s_entitySize)/2,
 	    	.w = s_entitySize,
 	    	.h = s_entitySize,
 	    };

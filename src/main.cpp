@@ -20,13 +20,13 @@ int main() {
 
 	SDL_SetRenderLogicalPresentation(
 		state.renderer.get(), 
-		Config::logicalWidth, 
-		Config::logicalHeight, 
+		Game::g_logicalWidth, 
+		Game::g_logicalHeight, 
 		SDL_LOGICAL_PRESENTATION_LETTERBOX
 	);
 	
 	Player player {state.renderer.get()};
-	auto* keyboardState {SDL_GetKeyboardState(NULL)};
+	auto* keyboardState {SDL_GetKeyboardState(nullptr)};
 
 	Uint64 PerfCountFrequency {SDL_GetPerformanceFrequency()};
 	Uint64 previousTime {SDL_GetPerformanceCounter()};
@@ -67,7 +67,7 @@ int main() {
 			&player.sourceRect(),
 			&player.destinationRect(),
 			player.angle(),
-			NULL,
+			nullptr,
 			player.flipMode()
 		);
 
@@ -95,7 +95,7 @@ bool initialize(SDL_State& state) {
 	}
 
 	// Create Renderer
-	state.renderer = Renderer {SDL_CreateRenderer(state.window.get(), NULL)};
+	state.renderer = Renderer {SDL_CreateRenderer(state.window.get(), nullptr)};
 	if(!state.renderer) {
 		SDL_Log("SDL_CreateRenderer Error: %s", SDL_GetError());
 		return false;
