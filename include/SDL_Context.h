@@ -6,7 +6,7 @@
 
 #include <SDL3/SDL.h>
 
-namespace Game {
+namespace game {
     constexpr static int g_logicalWidth{1280};
     constexpr static int g_logicalHeight{704};
 }
@@ -32,8 +32,8 @@ using Renderer  = std::unique_ptr<SDL_Renderer, SDL_Deleter>;
 using Texture   = std::unique_ptr<SDL_Texture,  SDL_Deleter>;
 
 struct SDL_State {
-	int width{Game::g_logicalWidth};
-	int height{Game::g_logicalHeight};
+	int width{game::g_logicalWidth};
+	int height{game::g_logicalHeight};
 
 	Window window{};
 	Renderer renderer{};

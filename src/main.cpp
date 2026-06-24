@@ -20,24 +20,25 @@ int main() {
 
 	SDL_SetRenderLogicalPresentation(
 		state.renderer.get(), 
-		Game::g_logicalWidth, 
-		Game::g_logicalHeight, 
+		game::g_logicalWidth, 
+		game::g_logicalHeight, 
 		SDL_LOGICAL_PRESENTATION_LETTERBOX
 	);
 	
 	Player player {state.renderer.get()};
+	player.makeFrames();
 	auto* keyboardState {SDL_GetKeyboardState(nullptr)};
 
 	Uint64 PerfCountFrequency {SDL_GetPerformanceFrequency()};
 	Uint64 previousTime {SDL_GetPerformanceCounter()};
 	bool running = true;
 	while(running) {
-		// Calculate DeltaTime
+		// Calculate deltaTime
 		Uint64 currentTime {SDL_GetPerformanceCounter()};
 		double deltaTime = static_cast<double> (currentTime - previousTime) / static_cast<double> (PerfCountFrequency);
 		previousTime = currentTime;
 
-		// Handle SDL_Events
+		// Handle Events
 		SDL_Event event{};
 		while(SDL_PollEvent(&event)) {
 			switch(event.type) {
@@ -54,17 +55,18 @@ int main() {
 				}
 			}
 		}
-		player.move(keyboardState, deltaTime);
 		
 		// Preform Drawing Commands
 		SDL_SetRenderDrawColor(state.renderer.get(), 20, 10, 30, 255);
 		SDL_RenderClear(state.renderer.get());
 
-		// Render player with correct orientation
+		player.move(keyboardState, deltaTime);
+		player.advanceFrame(deltaTime);
+		// Render current frame of the player
 		SDL_RenderTextureRotated(
 			state.renderer.get(), 
 			player.texture(), 
-			&player.sourceRect(),
+			&player.currentFrame(),
 			&player.destinationRect(),
 			player.angle(),
 			nullptr,
@@ -98,6 +100,12 @@ bool initialize(SDL_State& state) {
 	state.renderer = Renderer {SDL_CreateRenderer(state.window.get(), nullptr)};
 	if(!state.renderer) {
 		SDL_Log("SDL_CreateRenderer Error: %s", SDL_GetError());
+		return false;
+	}
+
+	// Enable VSync (To Cap Framerate to the monitor's refresh rate)
+	if(!SDL_SetRenderVSync(state.renderer.get(), SDL_RENDERER_VSYNC_ADAPTIVE)) {
+		SDL_Log("VSync Failure: %s", SDL_GetError());
 		return false;
 	}
 

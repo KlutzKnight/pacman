@@ -1,5 +1,7 @@
 #include "Player.h"
 
+#include <vector>
+
 #include <SDL3_image/SDL_image.h>
 
 #include "SDL_Context.h"
@@ -10,21 +12,21 @@ Player::Player (SDL_Renderer* renderer) {
         SDL_Log("IO Failure: %s", SDL_GetError());
     }
 
-    auto* surface {IMG_LoadSizedSVG_IO(file, s_textureWidth, s_textureHeight)};
+    auto* surface {IMG_LoadSizedSVG_IO(file, textureWidth, textureHeight)};
     SDL_CloseIO(file);
     if(!surface) {
         SDL_Log("SVG Failure: %s", SDL_GetError());
     }
 
-    m_playerTexture = Texture {SDL_CreateTextureFromSurface(renderer, surface)};
+    m_entityTexture = Texture {SDL_CreateTextureFromSurface(renderer, surface)};
     SDL_DestroySurface(surface);
-    if(!m_playerTexture) {
+    if(!m_entityTexture) {
         SDL_Log("Create Texture Error: %s", SDL_GetError());
     }
 }
 
 void Player::move(const bool* keyboardState, const double deltaTime) {
-    const float moveAmount = s_speed * static_cast<float> (deltaTime);
+    const float moveAmount = speed * static_cast<float> (deltaTime);
 
     if(keyboardState[SDL_SCANCODE_W])
         m_direction = Direction::up;
@@ -68,5 +70,28 @@ void Player::move(const bool* keyboardState, const double deltaTime) {
         {
             break;
         }
+    }
+}
+
+void Player::makeFrames() {
+    for(Index i{}; i < frameCount; i++) {
+        m_frames.emplace_back(
+            SDL_FRect {
+                .x = spriteSize * static_cast<float>(i) + (spriteOffset * static_cast<float>(i + 1)),
+                .y = spriteOffset,
+                .w = spriteSize,
+                .h = spriteSize
+            }
+        );
+    }
+}
+
+void Player::advanceFrame(double deltaTime) {
+    animationTimer += deltaTime;
+    
+    if(animationTimer >= 1.0/targetFPS) {
+        m_currentFrame++;
+        m_currentFrame %= frameCount;
+        animationTimer = 0;
     }
 }
