@@ -1,10 +1,6 @@
 #include "Player.h"
 
-#include <vector>
-
 #include <SDL3_image/SDL_image.h>
-
-#include "SDL_Context.h"
 
 Player::Player (SDL_Renderer* renderer) {
     auto* file = SDL_IOFromFile("assets/pacman/pacman.svg", "rb");
@@ -88,8 +84,9 @@ void Player::makeFrames() {
 
 void Player::advanceFrame(double deltaTime) {
     animationTimer += deltaTime;
-    
-    if(animationTimer >= 1.0/targetFPS) {
+    double frameTime = 1.0/targetFPS;
+
+    while(animationTimer >= frameTime) {
         m_currentFrame++;
         m_currentFrame %= frameCount;
         animationTimer = 0;

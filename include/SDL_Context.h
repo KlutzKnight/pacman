@@ -7,21 +7,21 @@
 #include <SDL3/SDL.h>
 
 namespace game {
-    constexpr static int g_logicalWidth{1280};
-    constexpr static int g_logicalHeight{704};
+    constexpr int g_logicalWidth{1280};
+    constexpr int g_logicalHeight{704};
 }
 
 // Custom Deletor struct for std::unique_ptr
 struct SDL_Deleter {
-	void operator()(SDL_Window *w) const {
+	void operator()(SDL_Window *w) const noexcept {
 		SDL_DestroyWindow(w);
 	}
 	
-	void operator()(SDL_Renderer *r) const {
+	void operator()(SDL_Renderer *r) const noexcept {
 		SDL_DestroyRenderer(r);
 	}
     
-    void operator()(SDL_Texture *t) const {
+    void operator()(SDL_Texture *t) const noexcept{
         SDL_DestroyTexture(t);
     }
 };
