@@ -1,5 +1,6 @@
 #include <SDL3/SDL.h>
 
+#include "Ghost.h"
 #include "Player.h"
 #include "SDL_Context.h"
 
@@ -22,7 +23,10 @@ int main() {
 	);
 	
 	Player player {state.renderer.get()};
+	Ghost ghost {state.renderer.get()};
+
 	player.makeFrames();
+	ghost.makeFrames();
 	auto* keyboardState {SDL_GetKeyboardState(nullptr)};
 
 	Uint64 PerfCountFrequency {SDL_GetPerformanceFrequency()};
@@ -67,6 +71,17 @@ int main() {
 			player.angle(),
 			nullptr,
 			player.flipMode()
+		);
+
+		// Render ghost
+		SDL_RenderTextureRotated(
+			state.renderer.get(), 
+			ghost.texture(), 
+			&ghost.currentFrame(),
+			&ghost.destinationRect(),
+			ghost.angle(),
+			nullptr,
+			ghost.flipMode()
 		);
 
 		// Swap buffers and present

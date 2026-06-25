@@ -1,26 +1,5 @@
 #include "Player.h"
 
-#include <SDL3_image/SDL_image.h>
-
-Player::Player (SDL_Renderer* renderer) {
-    auto* file = SDL_IOFromFile("assets/pacman/pacman.svg", "rb");
-    if(!file) {
-        SDL_Log("IO Failure: %s", SDL_GetError());
-    }
-
-    auto* surface {IMG_LoadSizedSVG_IO(file, textureWidth, textureHeight)};
-    SDL_CloseIO(file);
-    if(!surface) {
-        SDL_Log("SVG Failure: %s", SDL_GetError());
-    }
-
-    m_entityTexture = Texture {SDL_CreateTextureFromSurface(renderer, surface)};
-    SDL_DestroySurface(surface);
-    if(!m_entityTexture) {
-        SDL_Log("Create Texture Error: %s", SDL_GetError());
-    }
-}
-
 void Player::move(const bool* keyboardState, const double deltaTime) {
     const float moveAmount = speed * static_cast<float> (deltaTime);
 

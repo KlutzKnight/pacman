@@ -8,21 +8,35 @@
 
 class Player : public Entity {
     public:
-        Player (SDL_Renderer* renderer);
+        Player (SDL_Renderer* renderer)
+            : Entity(renderer, spriteSheetPath, textureWidth, textureHeight)
+        {
+        }
+
         void move(const bool* keyboardState, const double deltaTime);
-        void makeFrames();
-        void advanceFrame(double deltaTime);
-        const SDL_FRect& currentFrame() const { return m_frames[m_currentFrame]; }
+        void makeFrames() override;
+        void advanceFrame(double deltaTime) override;
+        
 
     private:
-        // Speed of player in Pixels per second
-        constexpr static int speed {128};
-        // Total Number of Frames in the sprite sheet
-        constexpr static Index frameCount {16};
-        // The width and height of the sprite 
+        static constexpr std::string_view spriteSheetPath = "assets/pacman/pacman.svg";
+        // The space in the sprite sheet 
+        // between each subsequent sprite
+        static constexpr float spriteOffset {4.0f};
+        // The width of the sprite 
         // sheet to be loaded as texture
-        constexpr static int textureWidth {2116};
-    	constexpr static int textureHeight {136};
+        static constexpr int textureWidth {2116};
+        // The height of the sprite 
+        // sheet to be loaded as texture
+        static constexpr int textureHeight {136};
+        // The size of the individual sprite of the player
+        static constexpr float spriteSize {128.0f};
+        // FPS of the animation of player
+        static constexpr double targetFPS {120.0};
+        // Total Number of Frames in the sprite sheet
+        static constexpr Index frameCount {16};
+        // Speed of player in Pixels per second
+        static constexpr int speed {128};
 };
 
 

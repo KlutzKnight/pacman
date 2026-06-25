@@ -6,7 +6,9 @@ add_executable(pacman)
 target_sources(pacman
   PRIVATE
     main.cpp
+    Entity.cpp
     Player.cpp
+    Ghost.cpp
 )
 
 set(CMAKE_CXX_STANDARD 20)
