@@ -8,17 +8,23 @@
 
 class Player : public Entity {
     public:
-        Player (SDL_Renderer* renderer)
+        Player (SDL_Renderer* renderer) 
             : Entity(renderer, spriteSheetPath, textureWidth, textureHeight)
         {
+            makeFrames();
         }
 
-        void move(const bool* keyboardState, const double deltaTime);
-        void makeFrames() override;
-        void advanceFrame(double deltaTime) override;
-        
+        const SDL_FRect& destinationRect() const { return m_dst; }
+        double angle() const { return m_angle; }
+        void update(const bool* keyboardState, const double deltaTime);
 
     private:
+        void setAngle(double angle) { m_angle = angle; }
+        void makeFrames() override;
+        bool move(const bool* keyboardState, const double deltaTime);
+        void advanceFrame(double deltaTime);
+        SDL_FRect& destination() { return m_dst; }
+
         static constexpr std::string_view spriteSheetPath = "assets/pacman/pacman.svg";
         // The space in the sprite sheet 
         // between each subsequent sprite
@@ -37,6 +43,20 @@ class Player : public Entity {
         static constexpr Index frameCount {16};
         // Speed of player in Pixels per second
         static constexpr int speed {128};
+        static constexpr float height = static_cast<float> (game::g_logicalWidth) - entitySize;
+
+        // Rectangle on the screen to put the player in
+        // Start in the middle of the screeen
+        SDL_FRect m_dst {
+            .x = (static_cast<float> (game::g_logicalWidth) - entitySize)/2,
+	    	.y = (static_cast<float> (game::g_logicalHeight) - entitySize)/2,
+	    	.w = entitySize,
+	    	.h = entitySize,
+	    };
+
+        double animationTimer {};
+        // Rotation angle in degrees
+        double m_angle{};
 };
 
 

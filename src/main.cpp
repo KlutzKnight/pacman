@@ -21,12 +21,10 @@ int main() {
 		game::g_logicalHeight, 
 		SDL_LOGICAL_PRESENTATION_LETTERBOX
 	);
-	
+
 	Player player {state.renderer.get()};
 	Ghost ghost {state.renderer.get()};
 
-	player.makeFrames();
-	ghost.makeFrames();
 	auto* keyboardState {SDL_GetKeyboardState(nullptr)};
 
 	Uint64 PerfCountFrequency {SDL_GetPerformanceFrequency()};
@@ -55,13 +53,14 @@ int main() {
 				}
 			}
 		}
-		
+
 		// Preform Drawing Commands
 		SDL_SetRenderDrawColor(state.renderer.get(), 20, 10, 30, 255);
 		SDL_RenderClear(state.renderer.get());
 
-		player.move(keyboardState, deltaTime);
-		player.advanceFrame(deltaTime);
+		player.update(keyboardState, deltaTime);
+		ghost.move(deltaTime);
+
 		// Render current frame of the player
 		SDL_RenderTextureRotated(
 			state.renderer.get(), 
@@ -79,7 +78,7 @@ int main() {
 			ghost.texture(), 
 			&ghost.currentFrame(),
 			&ghost.destinationRect(),
-			ghost.angle(),
+			0,
 			nullptr,
 			ghost.flipMode()
 		);

@@ -1,25 +1,38 @@
 #include "Ghost.h"
 
-#include <cmath>
+void Ghost::makeFrames() {
+    for(Index i{}; i < frameCount; i++) {
+        m_frames.emplace_back(
+            SDL_FRect {
+                .x = spriteWidth * static_cast<float> (i),
+                .y = 0,
+                .w = spriteWidth,
+                .h = spriteHeight
+            }
+        );
+    }
+}
 
 void Ghost::move(const double deltaTime) {
-    animationTimer += deltaTime;
-    double moveAmount = 500 * std::cos(deltaTime * animationTimer);
+    const float moveAmount = speed * static_cast<float> (deltaTime);
 
-    destinationRect().x += static_cast<float> (moveAmount);
-}
+    destination().x += moveAmount * static_cast<float> (direction);
+    if(destination().x < 0) {
+        direction = 1;
+        turnDown();
+    }
+    else if(destination().x > 250) {
+        direction = -1;
+        turnUp();
+    }
 
-void Ghost::makeFrames() {
-    m_frames.emplace_back(
-        SDL_FRect {
-            .x = 0,
-            .y = 0,
-            .w = spriteWidth,
-            .h = spriteHeight
-        }
-    );
-}
-
-void Ghost::advanceFrame([[maybe_unused]] double deltaTime) {
-    ;
+    // destination().y += moveAmount * static_cast<float> (direction);
+    // if(destination().y < 0) {
+    //     direction = 1;
+    //     turnDown();
+    // }
+    // else if(destination().y > 250) {
+    //     direction = -1;
+    //     turnUp();
+    // }
 }
