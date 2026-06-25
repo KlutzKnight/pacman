@@ -16,7 +16,7 @@ class Ghost : public Entity {
         void advanceFrame(double deltaTime) override;
     
     private:
-        static constexpr std::string_view spritePath = "assets/ghosts/ghost_g1.svg";
+        static constexpr std::string_view spritePath = "assets/ghosts/ghost_pinky.svg";
         // Speed of the Ghost(s) in Pixels per second
         static constexpr int speed {128};
         // Total Number of Frames in the sprite sheet
