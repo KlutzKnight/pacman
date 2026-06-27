@@ -7,8 +7,8 @@
 #include <SDL3/SDL.h>
 
 namespace game {
-    constexpr int g_logicalWidth{1280};
-    constexpr int g_logicalHeight{704};
+    constexpr int g_logicalWidth{1920};
+    constexpr int g_logicalHeight{1080};
 }
 
 // Custom Deletor struct for std::unique_ptr

@@ -1,6 +1,7 @@
 #include <SDL3/SDL.h>
 
 #include "Ghost.h"
+#include "Map.h"
 #include "Player.h"
 #include "SDL_Context.h"
 
@@ -23,7 +24,7 @@ int main() {
 	);
 
 	Player player {state.renderer.get()};
-	Ghost ghost {state.renderer.get()};
+	Map map {state.renderer.get()};
 
 	auto* keyboardState {SDL_GetKeyboardState(nullptr)};
 
@@ -58,8 +59,8 @@ int main() {
 		SDL_SetRenderDrawColor(state.renderer.get(), 20, 10, 30, 255);
 		SDL_RenderClear(state.renderer.get());
 
+		map.update(state.renderer.get());
 		player.update(keyboardState, deltaTime);
-		ghost.move(deltaTime);
 
 		// Render current frame of the player
 		SDL_RenderTextureRotated(
@@ -70,17 +71,6 @@ int main() {
 			player.angle(),
 			nullptr,
 			player.flipMode()
-		);
-
-		// Render ghost
-		SDL_RenderTextureRotated(
-			state.renderer.get(), 
-			ghost.texture(), 
-			&ghost.currentFrame(),
-			&ghost.destinationRect(),
-			0,
-			nullptr,
-			ghost.flipMode()
 		);
 
 		// Swap buffers and present

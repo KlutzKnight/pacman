@@ -3,7 +3,7 @@
 #include <SDL3_image/SDL_image.h>
 
 Entity::Entity(SDL_Renderer* renderer, std::string_view spriteSheetPath, int textureWidth, int textureHeight) {
-    auto* file = SDL_IOFromFile(spriteSheetPath.data(), "rb");
+    auto* file {SDL_IOFromFile(spriteSheetPath.data(), "rb")};
     if(!file) {
         SDL_Log("IO Failure: %s", SDL_GetError());
     }

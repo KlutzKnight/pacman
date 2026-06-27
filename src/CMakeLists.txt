@@ -9,6 +9,7 @@ target_sources(pacman
     Entity.cpp
     Player.cpp
     Ghost.cpp
+    Map.cpp
 )
 
 set(CMAKE_CXX_STANDARD 20)

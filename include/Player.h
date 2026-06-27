@@ -43,7 +43,6 @@ class Player : public Entity {
         static constexpr Index frameCount {16};
         // Speed of player in Pixels per second
         static constexpr int speed {128};
-        static constexpr float height = static_cast<float> (game::g_logicalWidth) - entitySize;
 
         // Rectangle on the screen to put the player in
         // Start in the middle of the screeen
