@@ -1,43 +1,53 @@
+#include <array>
+
 #include <SDL3/SDL.h>
 
 #include "Ghost.h"
 #include "Map.h"
 #include "Player.h"
-#include "SDL_Context.h"
+#include "SDL_Common.h"
 
 bool initialize(SDL_State& state);
 void cleanup();
 
 int main() {
 	SDL_State state{};
-
+	
 	if(!initialize(state)) {
 		cleanup();
 		return 1;
 	}
-
+	
 	SDL_SetRenderLogicalPresentation(
 		state.renderer.get(), 
 		game::g_logicalWidth, 
 		game::g_logicalHeight, 
 		SDL_LOGICAL_PRESENTATION_LETTERBOX
 	);
-
+	
 	Player player {state.renderer.get()};
+	std::array<Ghost, 4> ghosts {
+		Ghost{state.renderer.get()},
+		Ghost{state.renderer.get()},
+		Ghost{state.renderer.get()},
+		Ghost{state.renderer.get()},
+	};
 	Map map {state.renderer.get()};
-
+	map.loadClassicMap();
+	
 	auto* keyboardState {SDL_GetKeyboardState(nullptr)};
-
+	
 	Uint64 PerfCountFrequency {SDL_GetPerformanceFrequency()};
 	Uint64 previousTime {SDL_GetPerformanceCounter()};
 	bool running = true;
+
 	while(running) {
 		// Calculate deltaTime
 		Uint64 currentTime {SDL_GetPerformanceCounter()};
 		double deltaTime = static_cast<double> (currentTime - previousTime) / static_cast<double> (PerfCountFrequency);
 		previousTime = currentTime;
 
-		// Handle Events
+		// Handle SDL Events
 		SDL_Event event{};
 		while(SDL_PollEvent(&event)) {
 			switch(event.type) {
@@ -55,24 +65,25 @@ int main() {
 			}
 		}
 
-		// Preform Drawing Commands
+		// Handle input update entities
+		player.update(keyboardState, deltaTime);
+		for(auto& ghost: ghosts) {
+			ghost.update(deltaTime);
+		}
+
+
+		// Color the Screen
 		SDL_SetRenderDrawColor(state.renderer.get(), 20, 10, 30, 255);
+		// Clear the rendering target
 		SDL_RenderClear(state.renderer.get());
 
-		map.update(state.renderer.get());
-		player.update(keyboardState, deltaTime);
-
-		// Render current frame of the player
-		SDL_RenderTextureRotated(
-			state.renderer.get(), 
-			player.texture(), 
-			&player.currentFrame(),
-			&player.destinationRect(),
-			player.angle(),
-			nullptr,
-			player.flipMode()
-		);
-
+		// Render everything
+		map.draw(state.renderer.get());
+		player.render(state.renderer.get());
+		for(auto& ghost: ghosts) {
+			ghost.render(state.renderer.get());
+		}
+		
 		// Swap buffers and present
 		SDL_RenderPresent(state.renderer.get());
 	}

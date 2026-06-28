@@ -1,133 +1,76 @@
 #include "Map.h"
 
-#include <string>
+#include <fstream>
+#include <iostream>
 
 #include <SDL3/SDL.h>
 #include <SDL3_image/SDL_image.h>
 
+#include "SDL_Common.h"
+
 Map::Map(SDL_Renderer* renderer) {
     // Load the straight asset
-    auto* file {SDL_IOFromFile(straightSpritePath.data(), "rb")};
-    if(!file) {
-        SDL_Log("IO Failure(Straight): %s", SDL_GetError());
-    }
-
-    auto* surface {IMG_LoadSizedSVG_IO(file, spriteSize, spriteSize)};
-    SDL_CloseIO(file);
-    if(!surface) {
-        SDL_Log("SVG Failure(Straight): %s", SDL_GetError());
-    }
-
-    m_mapTextureStraight = Texture {SDL_CreateTextureFromSurface(renderer, surface)};
-    SDL_DestroySurface(surface);
-    if(!m_mapTextureStraight) {
-        SDL_Log("Create Texture Error(Straight): %s", SDL_GetError());
-    }
+    m_mapTextureStraight = loadSVGTexture(renderer, straightSpritePath.data(), tileSize, tileSize);
 
     // Load the corner asset
-    file = SDL_IOFromFile(cornerSpritePath.data(), "rb");
-    if(!file) {
-        SDL_Log("IO Failure(Corner): %s", SDL_GetError());
+    m_mapTextureCorner = loadSVGTexture(renderer, cornerSpritePath.data(), tileSize, tileSize);
+}
+
+void Map::loadClassicMap() {
+    std::ifstream inf{"assets/map/Map.txt"};
+    if(!inf) {
+        std::cerr << "Uh oh, Map.txt could not be opened for reading!\n";
     }
 
-    surface = {IMG_LoadSizedSVG_IO(file, spriteSize, spriteSize)};
-    SDL_CloseIO(file);
-    if(!surface) {
-        SDL_Log("SVG Failure(Corner): %s", SDL_GetError());
-    }
-
-    m_mapTextureCorner = Texture {SDL_CreateTextureFromSurface(renderer, surface)};
-    SDL_DestroySurface(surface);
-    if(!m_mapTextureCorner) {
-        SDL_Log("Create Texture Error(Corner): %s", SDL_GetError());
+    std::string line;
+    while(std::getline(inf, line)) {
+        m_asciiMap.push_back(line);
     }
 }
 
-void Map::update(SDL_Renderer* renderer) {
-    size_t rows {31};
-    size_t columns {28};
+void Map::draw(SDL_Renderer* renderer) {
+    size_t rows {m_asciiMap.size()};
+    size_t columns {m_asciiMap.at(0).size()};
+    int atlasIndex {};
+    double angle {};
 
-    SDL_FRect dst {
-        .x = 0,
-        .y = 0,
-        .w = 32.0f,
-	    .h = 32.0f,
-    };
-
+    destination().y = initialY;
     for(size_t i{}; i < rows; i++) {
-        dst.x = 0.0;
+        destination().x = initialX;
         for(size_t j{}; j < columns; j++) {
-
-            if(asciiMap[i][j] == U'┌') {
-                SDL_RenderTextureRotated(
-		        	renderer, 
-		        	m_mapTextureCorner.get(), 
-		        	nullptr,
-		        	&dst,
-		        	0,
-		        	nullptr,
-		        	SDL_FLIP_NONE
-		        );
+            
+            auto it = tileMap.find(m_asciiMap[i][j]);
+            if(it != tileMap.end()) {
+                atlasIndex = it->second.atlasIndex;
+                angle = it->second.angle;
             }
-            if(asciiMap[i][j] == U'─') {
-                SDL_RenderTextureRotated(
-		        	renderer, 
-		        	m_mapTextureStraight.get(), 
-		        	nullptr,
-		        	&dst,
-		        	0,
-		        	nullptr,
-		        	SDL_FLIP_NONE
-		        );
-            }
-            if(asciiMap[i][j] == U'│') {
-                SDL_RenderTextureRotated(
-		        	renderer, 
-		        	m_mapTextureStraight.get(), 
-		        	nullptr,
-		        	&dst,
-		        	90,
-		        	nullptr,
-		        	SDL_FLIP_NONE
-		        );
-            }
-            if(asciiMap[i][j] == U'┐') {
-                SDL_RenderTextureRotated(
-		        	renderer, 
-		        	m_mapTextureCorner.get(), 
-		        	nullptr,
-		        	&dst,
-		        	90,
-		        	nullptr,
-		        	SDL_FLIP_NONE
-		        );
-            }
-            if(asciiMap[i][j] == U'└') {
-                SDL_RenderTextureRotated(
-		        	renderer, 
-		        	m_mapTextureCorner.get(), 
-		        	nullptr,
-		        	&dst,
-		        	270,
-		        	nullptr,
-		        	SDL_FLIP_NONE
-		        );
-            }
-            if(asciiMap[i][j] == U'┘') {
-                SDL_RenderTextureRotated(
-		        	renderer, 
-		        	m_mapTextureCorner.get(), 
-		        	nullptr,
-		        	&dst,
-		        	180,
-		        	nullptr,
-		        	SDL_FLIP_NONE
-		        );
+            else {
+                atlasIndex = -1;
+                angle = 0;
             }
 
 
-            dst.x = static_cast<float> (((int)dst.x + 32));
+            SDL_RenderTextureRotated(
+		    	renderer, 
+		    	texture(atlasIndex),
+		    	nullptr,
+		    	&destination(),
+		    	angle,
+		    	nullptr,
+		    	SDL_FLIP_NONE
+		    );
+
+            destination().x += static_cast<float> (tileSize);
         }
-        dst.y = static_cast<float> (((int)dst.y + 32));
+        destination().y += static_cast<float> (tileSize);
     }
+}
+
+SDL_Texture* Map::texture(int atlasIndex) {
+    if(atlasIndex == 0)
+        return m_mapTextureStraight.get();
+    else if (atlasIndex == 1)
+        return m_mapTextureCorner.get();
+    else 
+        return nullptr;
 }

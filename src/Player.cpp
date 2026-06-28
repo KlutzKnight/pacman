@@ -56,7 +56,7 @@ void Player::advanceFrame(double deltaTime) {
     while(animationTimer >= frameTime) {
         m_currentFrame++;
         m_currentFrame %= frameCount;
-        animationTimer = 0;
+        animationTimer -= frameTime;
     }
 }
 

@@ -14,8 +14,8 @@ class Ghost : public Entity {
             makeFrames();
         }
 
-        const SDL_FRect& destinationRect() const { return m_dst; }
-        void move(const double deltaTime);
+        void update(const double deltaTime);
+        void render(SDL_Renderer *renderer) { draw(renderer); }
 
     private:
         void turnLeft() { setFlipMode(SDL_FLIP_NONE); }
@@ -23,7 +23,6 @@ class Ghost : public Entity {
         void turnUp() { m_currentFrame = 1; }
         void turnDown() { m_currentFrame = 2; }
         void makeFrames() override;
-        SDL_FRect& destination() { return m_dst; }
 
         static constexpr std::string_view baseSpritePath = "assets/ghosts/inky.svg";
         // Speed of the Ghost(s) in Pixels per second
@@ -44,15 +43,6 @@ class Ghost : public Entity {
         static constexpr Index frameCount {3};
 
         int direction{};
-        
-        // Rectangle on the screen to put the ghost in
-        SDL_FRect m_dst {
-            .x = (static_cast<float> (game::g_logicalWidth) - entitySize)/2,
-	    	.y = (static_cast<float> (game::g_logicalHeight) - entitySize)/2,
-	    	.w = entitySize,
-	    	.h = entitySize,
-	    };
-
 };
 
 

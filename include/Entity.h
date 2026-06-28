@@ -6,7 +6,7 @@
 
 #include <SDL3/SDL.h>
 
-#include "SDL_Context.h"
+#include "SDL_Common.h"
 
 class Entity {
     public:
@@ -20,7 +20,9 @@ class Entity {
          * @param textureHeight: The width of the sprite
          * 
          */
-        Entity(SDL_Renderer* renderer, std::string_view path, int textureWidth, int textureHeight);
+        Entity(SDL_Renderer* renderer, std::string_view path, int width, int height) {
+            m_entityTexture = loadSVGTexture(renderer, path, width, height);
+        }
         virtual ~Entity() = default;
 
         SDL_Texture* texture() const { return m_entityTexture.get(); }
@@ -31,9 +33,12 @@ class Entity {
     protected:
         using Index = std::vector<SDL_FRect>::size_type;
         
-        void setFlipMode(SDL_FlipMode mode) { m_flag = mode; }
         virtual void makeFrames() = 0;
-        
+        const SDL_FRect& destinationRect() const { return m_dst; }
+        SDL_FRect& destination() { return m_dst; }
+        void setFlipMode(SDL_FlipMode mode) { m_flag = mode; }
+        void draw(SDL_Renderer* renderer, double angle = 0.0);
+
         Texture m_entityTexture{};
         // The size of the rendered entity
         static constexpr float entitySize {32.0f};
@@ -43,6 +48,13 @@ class Entity {
     private:
         // Horizontal/Vertical FlipMode
         SDL_FlipMode m_flag{};
+        // Rectangle on the screen to put the Entity in
+        SDL_FRect m_dst {
+            .x = 0,
+            .y = 0,
+            .w = entitySize,
+            .h = entitySize,
+        };
 };
 
 
