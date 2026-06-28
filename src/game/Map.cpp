@@ -4,22 +4,14 @@
 #include <iostream>
 
 #include <SDL3/SDL.h>
-#include <SDL3_image/SDL_image.h>
 
-#include "SDL_Common.h"
-
-Map::Map(SDL_Renderer* renderer) {
-    // Load the straight asset
-    m_mapTextureStraight = loadSVGTexture(renderer, straightSpritePath.data(), tileSize, tileSize);
-
-    // Load the corner asset
-    m_mapTextureCorner = loadSVGTexture(renderer, cornerSpritePath.data(), tileSize, tileSize);
-}
+#include <GameConfig.h>
 
 void Map::loadClassicMap() {
     std::ifstream inf{"assets/map/Map.txt"};
     if(!inf) {
         std::cerr << "Uh oh, Map.txt could not be opened for reading!\n";
+        return;
     }
 
     std::string line;
@@ -31,7 +23,7 @@ void Map::loadClassicMap() {
 void Map::draw(SDL_Renderer* renderer) {
     size_t rows {m_asciiMap.size()};
     size_t columns {m_asciiMap.at(0).size()};
-    int atlasIndex {};
+    TileType atlasIndex {TileType::empty};
     double angle {};
 
     destination().y = initialY;
@@ -45,7 +37,7 @@ void Map::draw(SDL_Renderer* renderer) {
                 angle = it->second.angle;
             }
             else {
-                atlasIndex = -1;
+                atlasIndex = TileType::empty;
                 angle = 0;
             }
 
@@ -60,16 +52,16 @@ void Map::draw(SDL_Renderer* renderer) {
 		    	SDL_FLIP_NONE
 		    );
 
-            destination().x += static_cast<float> (tileSize);
+            destination().x += static_cast<float> (GameConfig::g_tileSize);
         }
-        destination().y += static_cast<float> (tileSize);
+        destination().y += static_cast<float> (GameConfig::g_tileSize);
     }
 }
 
-SDL_Texture* Map::texture(int atlasIndex) {
-    if(atlasIndex == 0)
+SDL_Texture* Map::texture(TileType atlasIndex) {
+    if(atlasIndex == TileType::straight)
         return m_mapTextureStraight.get();
-    else if (atlasIndex == 1)
+    else if (atlasIndex == TileType::corner)
         return m_mapTextureCorner.get();
     else 
         return nullptr;

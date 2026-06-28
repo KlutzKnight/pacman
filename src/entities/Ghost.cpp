@@ -1,13 +1,13 @@
 #include "Ghost.h"
 
 void Ghost::makeFrames() {
-    for(Index i{}; i < frameCount; i++) {
-        m_frames.emplace_back(
+    for(Index i{}; i < GhostAnimation::frameCount; i++) {
+        addFrame(
             SDL_FRect {
-                .x = spriteWidth * static_cast<float> (i),
+                .x = GhostAssets::spriteWidth * static_cast<float> (i),
                 .y = 0,
-                .w = spriteWidth,
-                .h = spriteHeight
+                .w = GhostAssets::spriteWidth,
+                .h = GhostAssets::spriteHeight
             }
         );
     }

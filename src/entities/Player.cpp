@@ -1,13 +1,13 @@
 #include "Player.h"
 
 void Player::makeFrames() {
-    for(Index i{}; i < frameCount; i++) {
-        m_frames.emplace_back(
+    for(Index i{}; i < PlayerAnimation::frameCount; i++) {
+        addFrame(
             SDL_FRect {
-                .x = spriteSize * static_cast<float>(i) + (spriteOffset * static_cast<float>(i + 1)),
-                .y = spriteOffset,
-                .w = spriteSize,
-                .h = spriteSize
+                .x = PlayerAssets::spriteSize * static_cast<float>(i) + (PlayerAssets::spriteOffset * static_cast<float>(i + 1)),
+                .y = PlayerAssets::spriteOffset,
+                .w = PlayerAssets::spriteSize,
+                .h = PlayerAssets::spriteSize
             }
         );
     }
@@ -51,11 +51,11 @@ bool Player::move(const bool* keyboardState, const double deltaTime) {
 
 void Player::advanceFrame(double deltaTime) {
     animationTimer += deltaTime;
-    double frameTime = 1.0/targetFPS;
+    double frameTime = 1.0/PlayerAnimation::targetFPS;
 
     while(animationTimer >= frameTime) {
         m_currentFrame++;
-        m_currentFrame %= frameCount;
+        m_currentFrame %= PlayerAnimation::frameCount;
         animationTimer -= frameTime;
     }
 }

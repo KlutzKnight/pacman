@@ -6,10 +6,12 @@ add_executable(pacman)
 target_sources(pacman
   PRIVATE
     main.cpp
-    Entity.cpp
-    Player.cpp
-    Ghost.cpp
-    Map.cpp
+    game/Game.cpp
+    core/AssetManager.cpp
+    entities/Entity.cpp
+    entities/Player.cpp
+    entities/Ghost.cpp
+    game/Map.cpp
 )
 
 set(CMAKE_CXX_STANDARD 20)
@@ -29,5 +31,7 @@ target_compile_options(pacman
 target_link_libraries(pacman PRIVATE SDL3::SDL3 SDL3_image::SDL3_image)
 target_include_directories(pacman
   PRIVATE
-    ${PROJECT_SOURCE_DIR}/include
+    ${PROJECT_SOURCE_DIR}/include/core
+    ${PROJECT_SOURCE_DIR}/include/entities
+    ${PROJECT_SOURCE_DIR}/include/game
 )
