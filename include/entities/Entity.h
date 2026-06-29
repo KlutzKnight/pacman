@@ -25,6 +25,7 @@ class Entity {
         {
         }
         virtual ~Entity() = default;
+        const SDL_FRect& collisionBox() const { return m_dst; }
 
     protected:
         using Index = std::vector<SDL_FRect>::size_type;

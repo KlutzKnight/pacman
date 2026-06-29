@@ -18,12 +18,13 @@ class Game {
     public:
         Game();
         ~Game() = default;
-        // Iterates Once
+        // Iterate One instance of the game loop
         void iterate(double deltaTime);
         double getDeltaTime();
-        // void handle(SDL_Event *event);
-        
+
     private:
+        bool checkCollision(const Entity& first, const Entity& second);
+        bool checkCollision(const Entity& entity, const Map& map);
         void update(double deltaTime);
         void render();
     

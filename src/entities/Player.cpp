@@ -57,8 +57,17 @@ void Player::advanceFrame(double deltaTime) {
 
 void Player::update(const bool* keyboardState, const double deltaTime) {
     if(!move(keyboardState, deltaTime)) {
-        m_currentFrame = 0;
+        resetFrame();
     }
 
     advanceFrame(deltaTime);
+}
+
+void Player::stop() {
+    destination().x = 0;
+    destination().x = 0;
+}
+
+void Player::kill() {
+    stop();
 }

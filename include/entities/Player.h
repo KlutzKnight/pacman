@@ -19,6 +19,8 @@ class Player : public Entity {
 
         void update(const bool* keyboardState, const double deltaTime);
         void render(SDL_Renderer *renderer) { draw(renderer, angle()); }
+        void stop();
+        void kill();
 
     private:
         struct PlayerAssets {
@@ -43,10 +45,11 @@ class Player : public Entity {
         };
 
         void makeFrames() override;
+        void resetFrame() { m_currentFrame = 0; }
+        void advanceFrame(double deltaTime);
         double angle() const { return m_angle; }
         void setAngle(double angle) { m_angle = angle; }
         float move(const bool* keyboardState, const double deltaTime);
-        void advanceFrame(double deltaTime);
 
         // Speed of player in Pixels per second
         static constexpr int speed {128};

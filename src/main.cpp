@@ -30,9 +30,6 @@ SDL_AppResult SDL_AppIterate(void *appstate) {
 }
 
 SDL_AppResult SDL_AppEvent(void*, SDL_Event* event) {
-    // Game& game = * static_cast<Game*>(appstate);
-
-
     switch(event->type) {
         case SDL_EVENT_QUIT:
         {
@@ -41,11 +38,6 @@ SDL_AppResult SDL_AppEvent(void*, SDL_Event* event) {
         case SDL_EVENT_WINDOW_RESIZED:
         {
             break;
-        }
-        default:
-        {
-            ;
-            // game.handle(event);
         }
     }
     return SDL_APP_CONTINUE;
