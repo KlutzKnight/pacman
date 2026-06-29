@@ -12,16 +12,18 @@
 class AssetManager {
     public:
         struct AssetInfo {
+            std::string key;
             std::string_view path;
             int width;
             int height;
         };
         // Loads all the assets
         AssetManager(SDL_Renderer* renderer);
-        void loadSVGTexture(const std::string& key, SDL_Renderer* renderer, AssetInfo ass);
         Texture& getTexture(std::string key) { return m_textures.at(key); }
-
+        
     private:
+        void loadSVGTexture(SDL_Renderer* renderer, AssetInfo ass);
+
         struct CustomDeleter {
             void operator() (SDL_IOStream* io) const noexcept {
                 SDL_CloseIO(io);

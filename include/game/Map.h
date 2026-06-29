@@ -34,8 +34,8 @@ class Map {
         Texture& m_mapTextureStraight;
         Texture& m_mapTextureCorner;
         // Center the Map
-        static constexpr float initialX {static_cast<float>(GameConfig::g_logicalWidth - GameConfig::g_mapWidth * GameConfig::g_tileSize)/2};
-        static constexpr float initialY {static_cast<float>(GameConfig::g_logicalHeight - GameConfig::g_mapHeight * GameConfig::g_tileSize)/2};
+        static constexpr float initialX {static_cast<float>(GameConfig::g_logicalWidth - GameConfig::g_classicMapWidth * GameConfig::g_tileSize)/2};
+        static constexpr float initialY {static_cast<float>(GameConfig::g_logicalHeight - GameConfig::g_classicMapHeight * GameConfig::g_tileSize)/2};
 
         // Rectangle on the screen to put each tile in
         SDL_FRect m_dst {

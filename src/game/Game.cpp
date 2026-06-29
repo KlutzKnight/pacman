@@ -35,38 +35,6 @@ Game::Game()
 	m_map.loadClassicMap();
 }
 
-void Game::run() {
-	Uint64 PerfCountFrequency {SDL_GetPerformanceFrequency()};
-	Uint64 previousTime {SDL_GetPerformanceCounter()};
-
-	bool running = true;
-	while(running) {
-		// Calculate deltaTime
-		Uint64 currentTime {SDL_GetPerformanceCounter()};
-		double deltaTime = static_cast<double> (currentTime - previousTime) / static_cast<double> (PerfCountFrequency);
-		previousTime = currentTime;
-
-		// Handle SDL Events
-		SDL_Event event{};
-		while(SDL_PollEvent(&event)) {
-			switch(event.type) {
-				case SDL_EVENT_QUIT:
-				{
-					running = false;
-					break;
-				}
-				case SDL_EVENT_WINDOW_PIXEL_SIZE_CHANGED:
-				{
-					break;
-				}
-			}
-		}
-
-		update(deltaTime);
-		render();
-	}
-}
-
 void Game::update(double deltaTime) {
 	// Handle input and update entities
 	m_player.update(m_keyboardState, deltaTime);
@@ -89,4 +57,17 @@ void Game::render() {
 	
 	// Swap buffers and present
 	SDL_RenderPresent(m_renderer.get());
+}
+
+void Game::iterate(double deltaTime) {
+    update(deltaTime);
+    render();
+}
+
+double Game::getDeltaTime() {
+	Uint64 currentTime {SDL_GetPerformanceCounter()};
+
+	double deltaTime = static_cast<double> (currentTime - m_previousTime) / static_cast<double> (m_perfCountFrequency);
+	m_previousTime = currentTime;
+	return deltaTime;
 }

@@ -19,7 +19,7 @@ class Player : public Entity {
 
         void update(const bool* keyboardState, const double deltaTime);
         void render(SDL_Renderer *renderer) { draw(renderer, angle()); }
-        
+
     private:
         struct PlayerAssets {
             // The space in the sprite sheet 
@@ -45,7 +45,7 @@ class Player : public Entity {
         void makeFrames() override;
         double angle() const { return m_angle; }
         void setAngle(double angle) { m_angle = angle; }
-        bool move(const bool* keyboardState, const double deltaTime);
+        float move(const bool* keyboardState, const double deltaTime);
         void advanceFrame(double deltaTime);
 
         // Speed of player in Pixels per second

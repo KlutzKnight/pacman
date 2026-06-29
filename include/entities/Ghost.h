@@ -8,16 +8,9 @@
 
 class Ghost : public Entity {
     public:
-        enum class GhostType {
-            blinky,
-            clyde,
-            inky,
-            pinky,
-            blue_ghost,
-        };
-
         Ghost(Texture& mainTexture, Texture& alternateTexture)
             : Entity(mainTexture)
+            , m_alternateTexture {alternateTexture}
         {
             makeFrames();
         }
@@ -57,6 +50,8 @@ class Ghost : public Entity {
         // Speed of the Ghost(s) in Pixels per second
         static constexpr int speed {128};
 
+        // Frightened Texture of the ghosts
+        Texture& m_alternateTexture;
         int direction{};
 };
 

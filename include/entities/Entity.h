@@ -44,7 +44,7 @@ class Entity {
         static constexpr float entitySize {32.0f};
         // Index of the current frame of the texture
         Index m_currentFrame {};
-        
+
     private:
         Texture& m_entityTexture;
         // Store the different frames of the Entity

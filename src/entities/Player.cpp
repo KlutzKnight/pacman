@@ -13,40 +13,35 @@ void Player::makeFrames() {
     }
 }
 
-bool Player::move(const bool* keyboardState, const double deltaTime) {
-    bool moved {false};
-    const float moveAmount = speed * static_cast<float> (deltaTime);
+float Player::move(const bool* keyboardState, const double deltaTime) {
+    float moveAmount = speed * static_cast<float> (deltaTime);
 
     // Move player based on the key pressed
     if(keyboardState[SDL_SCANCODE_W]) {
         destination().y -= moveAmount;
 		setFlipMode(SDL_FLIP_NONE);
 		setAngle(-90);
-        moved = true;
     }
 	else if(keyboardState[SDL_SCANCODE_S]) {
         destination().y += moveAmount;
 		setFlipMode(SDL_FLIP_NONE);
 		setAngle(90);
-        moved = true;
     }
 	else if(keyboardState[SDL_SCANCODE_A]) {
         destination().x -= moveAmount;
         setFlipMode(SDL_FLIP_HORIZONTAL);
         setAngle(0);
-        moved = true;
     }
 	else if(keyboardState[SDL_SCANCODE_D]) {
         destination().x += moveAmount;
 		setFlipMode(SDL_FLIP_NONE);	
 		setAngle(0);
-        moved = true;
     }
     else {
-        moved = false;
+        moveAmount = 0;
     }
 
-    return moved;
+    return moveAmount;
 }
 
 void Player::advanceFrame(double deltaTime) {
@@ -56,15 +51,14 @@ void Player::advanceFrame(double deltaTime) {
     while(animationTimer >= frameTime) {
         m_currentFrame++;
         m_currentFrame %= PlayerAnimation::frameCount;
-        animationTimer -= frameTime;
+        animationTimer = 0;
     }
 }
 
 void Player::update(const bool* keyboardState, const double deltaTime) {
-    if(move(keyboardState, deltaTime)) {
-        advanceFrame(deltaTime);
-    }
-    else {
+    if(!move(keyboardState, deltaTime)) {
         m_currentFrame = 0;
     }
+
+    advanceFrame(deltaTime);
 }
