@@ -66,3 +66,11 @@ SDL_Texture* Map::texture(TileType atlasIndex) {
     else 
         return nullptr;
 }
+
+bool Map::isEmptyTile(Index x, Index y) const {
+    auto tile {m_asciiMap[y][x]};
+    return  tile == '.' ||
+            tile == ' ' ||
+            tile == 'P' ||
+            tile == 'G';
+}

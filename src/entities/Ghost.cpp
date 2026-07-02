@@ -16,15 +16,15 @@ void Ghost::makeFrames() {
 void Ghost::update(const double deltaTime) {
     const float moveAmount = speed * static_cast<float> (deltaTime);
 
-    destination().x += moveAmount * static_cast<float> (direction);
-    if(destination().x < 300) {
-        direction = 1;
-        turnRight();
-    }
-    else if(destination().x > 500) {
-        direction = -1;
-        turnLeft();
-    }
+    // destination().x += moveAmount * static_cast<float> (direction);
+    // if(destination().x < 400) {
+    //     direction = 1;
+    //     turnRight();
+    // }
+    // else if(destination().x > 550) {
+    //     direction = -1;
+    //     turnLeft();
+    // }
 
     // destination().y += moveAmount * static_cast<float> (direction);
     // if(destination().y < 0) {

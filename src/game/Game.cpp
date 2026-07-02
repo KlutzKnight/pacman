@@ -119,6 +119,18 @@ bool Game::checkCollision(const Entity& first, const Entity& second) {
     return true;
 }
 
-bool Game::checkCollision([[maybe_unused]] const Entity& entity, [[maybe_unused]] const Map& map) {
-	return false;
+bool Game::checkCollision(const Entity& entity, const Map& map) {
+	auto entityCenterX {entity.collisionBox().x + Entity::g_entitySize/2};
+	auto entityCenterY {entity.collisionBox().y + Entity::g_entitySize/2};
+
+	auto entityXPosition {entityCenterX - 6 * GameConfig::g_tileSize};
+	auto entityYPosition {entityCenterY - GameConfig::g_tileSize};
+
+	auto entityTileX {entityXPosition/GameConfig::g_tileSize};
+	auto entityTileY {entityYPosition/GameConfig::g_tileSize};
+
+	return !map.isEmptyTile(
+			static_cast<Map::Index> (entityTileX), 
+			static_cast<Map::Index> (entityTileY)
+		);
 }

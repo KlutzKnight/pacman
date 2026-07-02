@@ -12,6 +12,7 @@
 
 class Map {
     public:
+        using Index = std::vector<std::string>::size_type;
         Map(Texture& straightTexture, Texture& cornerTexture) 
             : m_mapTextureStraight {straightTexture}
             , m_mapTextureCorner {cornerTexture}
@@ -20,6 +21,7 @@ class Map {
 
         void loadClassicMap();
         void draw(SDL_Renderer* renderer);
+        bool isEmptyTile (Index x, Index y) const;
 
     private:
         enum class TileType {

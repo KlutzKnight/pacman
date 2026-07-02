@@ -5,14 +5,14 @@
 #include <SDL3/SDL.h>
 
 #include "Entity.h"
+#include "GameConfig.h"
 
 class Player : public Entity {
     public:
         Player (Texture& texture) 
             : Entity(texture)
         {
-            destination().x = (1280.0f - entitySize)/2;
-	    	destination().y = (1056.0f - entitySize)/2;
+	    	destination().y = (GameConfig::g_logicalHeight + 15 * g_entitySize)/2;
 
             makeFrames();
         }
@@ -56,7 +56,11 @@ class Player : public Entity {
 
         double animationTimer {};
         // Rotation angle in degrees
-        double m_angle{};
+        double m_angle {};
+        // The amount of X movement done in pixels per frame 
+        float moveAmountX {};
+        // The amount of Y movement done in pixels per frame 
+        float moveAmountY {};
 };
 
 

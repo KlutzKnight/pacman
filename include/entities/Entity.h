@@ -6,7 +6,9 @@
 
 #include <SDL3/SDL.h>
 
+#include "GameConfig.h"
 #include "Texture.h"
+
 
 class Entity {
     public:
@@ -26,6 +28,8 @@ class Entity {
         }
         virtual ~Entity() = default;
         const SDL_FRect& collisionBox() const { return m_dst; }
+        // All rendered entites in 32x32 space
+        static constexpr float g_entitySize {32.0f};
 
     protected:
         using Index = std::vector<SDL_FRect>::size_type;
@@ -40,9 +44,7 @@ class Entity {
         SDL_FlipMode flipMode() const { return m_flag; }
         void setFlipMode(SDL_FlipMode mode) { m_flag = mode; }
         void addFrame(SDL_FRect&& frame) { m_frames.emplace_back(frame); }
-        
-        // All rendered entites in 32x32 space
-        static constexpr float entitySize {32.0f};
+
         // Index of the current frame of the texture
         Index m_currentFrame {};
 
@@ -54,10 +56,10 @@ class Entity {
         SDL_FlipMode m_flag{};
         // Rectangle on the screen to put the Entity in
         SDL_FRect m_dst {
-            .x = 0,
-            .y = 0,
-            .w = entitySize,
-            .h = entitySize,
+            .x = (GameConfig::g_logicalWidth - g_entitySize)/2,
+            .y = (GameConfig::g_logicalHeight - g_entitySize)/2,
+            .w = g_entitySize,
+            .h = g_entitySize,
         };
 };
 
