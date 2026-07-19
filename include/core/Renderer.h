@@ -7,10 +7,12 @@
 
 #include <SDL3/SDL.h>
 
+#include "Window.h"
+
 class Renderer {
     public:
-        Renderer(SDL_Window* window, const char* name = nullptr) 
-            : m_renderer {SDL_CreateRenderer(window, name)}
+        Renderer(Window& window, const char* name = nullptr) 
+            : m_renderer {SDL_CreateRenderer(window.get(), name)}
         {
             if(!m_renderer) {
                 throw std::runtime_error(SDL_GetError());

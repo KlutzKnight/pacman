@@ -1,3 +1,7 @@
+set(CMAKE_CXX_STANDARD 23)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_CXX_EXTENSIONS OFF)
+
 find_package(SDL3 REQUIRED)
 find_package(SDL3_image REQUIRED)
 
@@ -12,14 +16,11 @@ target_sources(pacman
     entities/Player.cpp
     entities/Ghost.cpp
     game/Map.cpp
+    game/Navigation.cpp
 )
 
-set(CMAKE_CXX_STANDARD 20)
-set(CMAKE_CXX_STANDARD_REQUIRED ON)
-set(CMAKE_CXX_EXTENSIONS OFF)
-
 target_compile_options(pacman
-  PRIVATE 
+  PRIVATE
     -Wall
     -Wextra
     -Wpedantic

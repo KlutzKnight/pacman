@@ -1,5 +1,7 @@
 #include "Game.h"
 
+#include <vector>
+
 #include "AssetManager.h"
 #include "GameConfig.h"
 #include "Ghost.h"
@@ -9,19 +11,22 @@
 #include "SDLContext.h"
 #include "Window.h"
 
+#include <SDL3/SDL.h>
+
 Game::Game() 
     : m_sdl{}
     , m_window {"Pacman"}
-    , m_renderer {m_window.get()}
-    , m_assets {m_renderer.get()}
-    , m_player {m_assets.getTexture("Player")}
+    , m_renderer {m_window}
+    , m_assets {m_renderer}
+    , m_player {m_assets}
     , m_ghosts {{
-		{m_assets.getTexture("Blinky"), m_assets.getTexture("Blue Ghost")},
-		{m_assets.getTexture("Clyde"), m_assets.getTexture("Blue Ghost")},
-		{m_assets.getTexture("Inky"), m_assets.getTexture("Blue Ghost")},
-		{m_assets.getTexture("Pinky"), m_assets.getTexture("Blue Ghost")},
+		{m_player, m_assets, "Blinky"},
+		{m_player, m_assets, "Clyde"},
+		{m_player, m_assets, "Inky"},
+		{m_player, m_assets, "Pinky"},
 	}}
-    , m_map {m_assets.getTexture("Map Straight"), m_assets.getTexture("Map Corner")}
+    , m_map {m_assets}
+	, m_graph {m_map}
 {
     // Set Logical Width and Height            	
     SDL_SetRenderLogicalPresentation(
@@ -30,21 +35,25 @@ Game::Game()
     	GameConfig::g_logicalHeight,
     	SDL_LOGICAL_PRESENTATION_LETTERBOX
     );
-
-	m_map.loadClassicMap();
 }
 
 void Game::update(double deltaTime) {
-	// Handle input and update the player and the ghosts
 	m_player.update(m_keyboardState, deltaTime);
-	for(auto& ghost: m_ghosts) {
-		ghost.update(deltaTime);
-	}
-
 	if(checkCollision(m_player, m_map)) {
 		m_player.stop();
 	}
+
 	for(auto& ghost: m_ghosts) {
+		if(m_ghosts[0].name() == Ghost::Name::blinky) {
+			ghost.update(deltaTime, m_graph, m_map, m_ghosts[0]);
+		}
+		else {
+			throw std::runtime_error("Blinky is not the first ghost :(");
+		}
+		
+		if(checkCollision(ghost, m_map)) {
+			ghost.stop();
+		}
 		if(checkCollision(m_player, ghost)) {
 			m_player.kill();
 		}
@@ -53,7 +62,7 @@ void Game::update(double deltaTime) {
 
 void Game::render() {
 	// Color the Screen
-	SDL_SetRenderDrawColor(m_renderer.get(), 20, 10, 30, 255);
+	SDL_SetRenderDrawColor(m_renderer.get(), 39, 39, 54, SDL_ALPHA_OPAQUE);
 	// Clear the rendering target
 	SDL_RenderClear(m_renderer.get());
 
@@ -120,17 +129,22 @@ bool Game::checkCollision(const Entity& first, const Entity& second) {
 }
 
 bool Game::checkCollision(const Entity& entity, const Map& map) {
-	auto entityCenterX {entity.collisionBox().x + Entity::g_entitySize/2};
-	auto entityCenterY {entity.collisionBox().y + Entity::g_entitySize/2};
+	const auto& box = entity.collisionBox();
+	const auto sizeX = box.w - 1;
+	const auto sizeY = box.h - 1;
 
-	auto entityXPosition {entityCenterX - 6 * GameConfig::g_tileSize};
-	auto entityYPosition {entityCenterY - GameConfig::g_tileSize};
+	std::vector<Map::Point> ent {
+		{box.x,			box.y},
+		{box.x + sizeX,	box.y},
+		{box.x,			box.y + sizeY},
+		{box.x + sizeX,	box.y + sizeY}
+	};
 
-	auto entityTileX {entityXPosition/GameConfig::g_tileSize};
-	auto entityTileY {entityYPosition/GameConfig::g_tileSize};
+	for(auto& position: ent) {
+		if(!map.isWalkable(position.x/GameConfig::g_tileSize, position.y/GameConfig::g_tileSize)) {
+			return true;
+		}
+	}
 
-	return !map.isEmptyTile(
-			static_cast<Map::Index> (entityTileX), 
-			static_cast<Map::Index> (entityTileY)
-		);
+	return false;
 }

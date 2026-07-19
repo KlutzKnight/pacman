@@ -14,6 +14,8 @@ class SDLContext {
                 throw std::runtime_error(SDL_GetError());
             }
         }
+        SDLContext& operator=(const SDLContext&) = delete;
+        SDLContext&& operator=(SDLContext&&) = delete;
 
         ~SDLContext() {
             SDL_Quit();

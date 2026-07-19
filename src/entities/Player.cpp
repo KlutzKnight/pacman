@@ -1,83 +1,112 @@
 #include "Player.h"
 
-#include "GameConfig.h"
-
 void Player::makeFrames() {
-    for(Index i{}; i < PlayerAnimation::frameCount; i++) {
-        addFrame(
-            SDL_FRect {
-                .x = PlayerAssets::spriteSize * static_cast<float>(i) + (PlayerAssets::spriteOffset * static_cast<float>(i + 1)),
-                .y = PlayerAssets::spriteOffset,
-                .w = PlayerAssets::spriteSize,
-                .h = PlayerAssets::spriteSize
-            }
-        );
-    }
+    // Initializes m_frames to contain all the "frames",
+    // i.e. the SDL_FRect coordinates to the 
+    // sprite sheet.
+    addFrame(
+        SDL_FRect {
+            .x = 0,
+            .y = 0,
+            .w = g_spriteSize,
+            .h = g_spriteSize
+        }
+    );
+
+    addFrame(
+        SDL_FRect {
+            .x = g_spriteSize * 1,
+            .y = 0,
+            .w = g_spriteSize,
+            .h = g_spriteSize
+        }
+    );
+
+    addFrame(
+        SDL_FRect {
+            .x = g_spriteSize * 2,
+            .y = 0,
+            .w = g_spriteSize,
+            .h = g_spriteSize
+        }
+    );
+
+    addFrame(
+        SDL_FRect {
+            .x = g_spriteSize * 3,
+            .y = 0,
+            .w = g_spriteSize,
+            .h = g_spriteSize
+        }
+    );   
 }
 
-float Player::move(const bool* keyboardState, const double deltaTime) {
+bool Player::move(const bool* keyboardState, const double deltaTime) {
     float moveAmount = speed * static_cast<float> (deltaTime);
-    moveAmountX = 0;
-    moveAmountY = 0;
-    
+    m_moveAmountX = 0;
+    m_moveAmountY = 0;
+
     // Move player based on the key pressed
     if(keyboardState[SDL_SCANCODE_W]) {
-        destination().y -= moveAmount;
-		setFlipMode(SDL_FLIP_NONE);
-		setAngle(-90);
-        moveAmountY -= moveAmount;
-        
-    }
-	else if(keyboardState[SDL_SCANCODE_S]) {
-        destination().y += moveAmount;
-		setFlipMode(SDL_FLIP_NONE);
-		setAngle(90);
-        moveAmountY += moveAmount;
-    }
-	else if(keyboardState[SDL_SCANCODE_A]) {
-        destination().x -= moveAmount;
-        setFlipMode(SDL_FLIP_HORIZONTAL);
-        setAngle(0);
-        moveAmountX -= moveAmount;
-    }
-	else if(keyboardState[SDL_SCANCODE_D]) {
-        destination().x += moveAmount;
-		setFlipMode(SDL_FLIP_NONE);	
-		setAngle(0);
-        moveAmountX += moveAmount;
-    }
-    else {
-        moveAmount = 0;
+        m_currentDirection = Direction::up;
+        turnUp();
+        m_moveAmountY -= moveAmount;
+        destination().y += m_moveAmountY;
+    } else if(keyboardState[SDL_SCANCODE_S]) {
+        m_currentDirection = Direction::down;
+        turnDown();
+        m_moveAmountY += moveAmount;
+        destination().y += m_moveAmountY;
+    } else if(keyboardState[SDL_SCANCODE_A]) {
+        m_currentDirection = Direction::left;
+        turnLeft();
+        m_moveAmountX -= moveAmount;
+        destination().x += m_moveAmountX;
+    } else if(keyboardState[SDL_SCANCODE_D]) {
+        m_currentDirection = Direction::right;
+        turnRight();
+        m_moveAmountX += moveAmount;
+        destination().x += m_moveAmountX;
+    } else {
+        return false;
     }
 
-    return moveAmount;
+    return true;
 }
 
-void Player::advanceFrame(double deltaTime) {
-    animationTimer += deltaTime;
-    double frameTime = 1.0/PlayerAnimation::targetFPS;
+void Player::turnLeft() {
+    setFlipMode(SDL_FLIP_HORIZONTAL);
+    setAngle(0);
+}
 
-    while(animationTimer >= frameTime) {
-        m_currentFrame++;
-        m_currentFrame %= PlayerAnimation::frameCount;
-        animationTimer = 0;
-    }
+void Player::turnRight() {
+    setFlipMode(SDL_FLIP_NONE);
+    setAngle(0);
+}
+
+void Player::turnUp() {
+    setFlipMode(SDL_FLIP_NONE);
+    setAngle(-90);
+}
+
+void Player::turnDown() {
+    setFlipMode(SDL_FLIP_NONE);
+    setAngle(90);
 }
 
 void Player::update(const bool* keyboardState, const double deltaTime) {
+    // Moves the player and updates the animation
+    // frame if the player moved
     if(!move(keyboardState, deltaTime)) {
         resetFrame();
+        return;
     }
 
     advanceFrame(deltaTime);
 }
 
-void Player::stop() {
-    destination().x -= moveAmountX;
-    destination().y -= moveAmountY;
-}
-
 void Player::kill() {
-    destination().x = (GameConfig::g_logicalWidth - g_entitySize)/2;
-    destination().y = (GameConfig::g_logicalHeight + 15 * g_entitySize)/2;
+    // Resets the position back to the initial spawn point
+    destination().x = initialX;
+    destination().y = initialY;
 }

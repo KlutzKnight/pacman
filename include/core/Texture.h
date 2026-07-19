@@ -9,17 +9,13 @@
 
 class Texture {
     public:
-        Texture(SDL_Renderer* renderer, SDL_Surface* surface) 
-            : m_texture {SDL_CreateTextureFromSurface(renderer, surface)}
+        Texture(SDL_Texture* texture) 
+            : m_texture {texture}
         {
             if(!m_texture) {
                 throw std::runtime_error(SDL_GetError());
             }
         }
-        Texture(const Texture&) = delete;
-        Texture(Texture&&) = default;
-        Texture& operator=(const Texture&) = delete;
-        Texture& operator=(Texture&&) = default;
 
         SDL_Texture* get() const noexcept { return m_texture.get(); }
 

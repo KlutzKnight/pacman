@@ -1,11 +1,14 @@
 #include "Game.h"
 
+// Use SDL3's main function callback instead of 
+// implementing the main loop
 #define SDL_MAIN_USE_CALLBACKS
 #include <SDL3/SDL_main.h>
 
+#include <exception>
 #include <iostream>
-#include <stdexcept>
 
+// To perform any one time initialization
 SDL_AppResult SDL_AppInit(void **appstate, int, char**) {
     try {
         *appstate = new Game;
@@ -17,6 +20,7 @@ SDL_AppResult SDL_AppInit(void **appstate, int, char**) {
     }
 }
 
+// One iteration of the main game loop
 SDL_AppResult SDL_AppIterate(void *appstate) {
     Game& game = * static_cast<Game*>(appstate);
     try {
@@ -29,6 +33,7 @@ SDL_AppResult SDL_AppIterate(void *appstate) {
     }
 }
 
+// One iteration of the main event handling logic
 SDL_AppResult SDL_AppEvent(void*, SDL_Event* event) {
     switch(event->type) {
         case SDL_EVENT_QUIT:
@@ -43,6 +48,7 @@ SDL_AppResult SDL_AppEvent(void*, SDL_Event* event) {
     return SDL_APP_CONTINUE;
 }
 
+// Any cleanup to be done here
 void SDL_AppQuit(void *appstate, SDL_AppResult) {
     Game* game = static_cast<Game*>(appstate);
     delete game;
