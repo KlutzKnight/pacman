@@ -8,7 +8,7 @@
 
 void Ghost::makeFrames() {
     // Initializes m_frames to contain all the "frames",
-    // which are just the SDL_FRect coordinates to the 
+    // which are just the SDL_FRect coordinates to the
     // sprite sheet.
     float locationY {};
 
@@ -308,8 +308,7 @@ bool Ghost::atTileCenter() const {
 }
 
 void Ghost::advanceFrame(double deltaTime) {
-    // Advances the animation of the player
-    // (Only when the player moves)
+    // Advances the animation of the ghost
     m_animationTimer += deltaTime;
     double frameTime = 5.0/targetFPS;
 
