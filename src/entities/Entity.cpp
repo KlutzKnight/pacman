@@ -31,8 +31,7 @@ const SDL_Rect Entity::collisionBox() const {
 }
 
 void Entity::advanceFrame(double deltaTime) {
-    // Advances the animation of the player
-    // (Only when the player moves)
+    // Advances the animation of the entity
     m_animationTimer += deltaTime;
     double frameTime = 1.0/targetFPS;
 

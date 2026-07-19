@@ -4,6 +4,7 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 
 find_package(SDL3 REQUIRED)
 find_package(SDL3_image REQUIRED)
+find_package(SDL3_ttf REQUIRED)
 
 add_executable(pacman)
 
@@ -17,6 +18,8 @@ target_sources(pacman
     entities/Ghost.cpp
     game/Map.cpp
     game/Navigation.cpp
+    game/WorldState.cpp
+    game/IntroState.cpp
 )
 
 target_compile_options(pacman
@@ -29,7 +32,7 @@ target_compile_options(pacman
     -Wshadow
 )
 
-target_link_libraries(pacman PRIVATE SDL3::SDL3 SDL3_image::SDL3_image)
+target_link_libraries(pacman PRIVATE SDL3::SDL3 SDL3_image::SDL3_image SDL3_ttf::SDL3_ttf)
 target_include_directories(pacman
   PRIVATE
     ${PROJECT_SOURCE_DIR}/include/core

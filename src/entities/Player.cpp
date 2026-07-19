@@ -4,41 +4,16 @@ void Player::makeFrames() {
     // Initializes m_frames to contain all the "frames",
     // i.e. the SDL_FRect coordinates to the 
     // sprite sheet.
-    addFrame(
-        SDL_FRect {
-            .x = 0,
-            .y = 0,
-            .w = g_spriteSize,
-            .h = g_spriteSize
-        }
-    );
-
-    addFrame(
-        SDL_FRect {
-            .x = g_spriteSize * 1,
-            .y = 0,
-            .w = g_spriteSize,
-            .h = g_spriteSize
-        }
-    );
-
-    addFrame(
-        SDL_FRect {
-            .x = g_spriteSize * 2,
-            .y = 0,
-            .w = g_spriteSize,
-            .h = g_spriteSize
-        }
-    );
-
-    addFrame(
-        SDL_FRect {
-            .x = g_spriteSize * 3,
-            .y = 0,
-            .w = g_spriteSize,
-            .h = g_spriteSize
-        }
-    );   
+    for(Index i{}; i < frameCount; i++) {
+        addFrame(
+            SDL_FRect {
+                .x = g_spriteSize * static_cast<float>(i),
+                .y = 0,
+                .w = g_spriteSize,
+                .h = g_spriteSize
+            }
+        );    
+    }
 }
 
 bool Player::move(const bool* keyboardState, const double deltaTime) {
@@ -70,7 +45,7 @@ bool Player::move(const bool* keyboardState, const double deltaTime) {
     } else {
         return false;
     }
-
+    
     return true;
 }
 

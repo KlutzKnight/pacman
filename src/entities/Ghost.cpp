@@ -4,7 +4,7 @@
 #include "Navigation.h"
 
 #include <algorithm>
-#include <cmath>
+#include <stdexcept>
 
 void Ghost::makeFrames() {
     // Initializes m_frames to contain all the "frames",
@@ -31,6 +31,11 @@ void Ghost::makeFrames() {
         case Name::clyde:
         {
             locationY = 96;
+            break;
+        }
+        default:
+        {
+            throw std::runtime_error("How is ghost named pacman or anything else???");
             break;
         }
     }
@@ -184,7 +189,6 @@ void Ghost::setCurrentTarget(const Ghost& blinky) {
         }
     }
 }
-
 void Ghost::setCornerTarget() {
     // I don't know why but the ghosts get stuck after some time
     // If I have these values they don't (I think)
@@ -215,7 +219,6 @@ void Ghost::setCornerTarget() {
         }
     }
 }
-
 void Ghost::setGhostHouseTarget() {
     m_currentTarget = {GameConfig::g_classicMapWidth/2, GameConfig::g_classicMapHeight/2};
 }
@@ -228,28 +231,24 @@ void Ghost::move(const double deltaTime) {
     switch(direction()) {
         case Direction::left:
         {
-            turnLeft();
             m_moveAmountX -= moveAmount;
             destination().x += m_moveAmountX;
             break;
         }
         case Direction::right:
         {
-            turnRight();
             m_moveAmountX += moveAmount;
             destination().x += m_moveAmountX;
             break;
         }
         case Direction::up:
         {
-            turnUp();
             m_moveAmountY -= moveAmount;
             destination().y += m_moveAmountY;
             break;
         }
         case Direction::down:
         {
-            turnDown();
             m_moveAmountY += moveAmount;
             destination().y += m_moveAmountY;
             break;
@@ -306,4 +305,17 @@ bool Ghost::atTileCenter() const {
 
     return (cx % GameConfig::g_tileSize) <= g_entitySize/4 &&
            (cy % GameConfig::g_tileSize) <= g_entitySize/4;
+}
+
+void Ghost::advanceFrame(double deltaTime) {
+    // Advances the animation of the player
+    // (Only when the player moves)
+    m_animationTimer += deltaTime;
+    double frameTime = 5.0/targetFPS;
+
+    while(m_animationTimer >= frameTime) {
+        m_currentFrame++;
+        m_currentFrame %= frameCount;
+        m_animationTimer -= frameTime;
+    }
 }

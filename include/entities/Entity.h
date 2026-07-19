@@ -37,7 +37,7 @@ class Entity {
         void draw(SDL_Texture* texture, SDL_Renderer* renderer, double angle = 0.0);
         const SDL_FRect& currentFrame() const { return m_frames[m_currentFrame]; }
         void addFrame(SDL_FRect&& frame) { m_frames.emplace_back(frame); }
-        void advanceFrame(double deltaTime);
+        virtual void advanceFrame(double deltaTime);
         virtual void makeFrames() = 0;
 
         const SDL_FRect& destinationRect() const { return m_dst; }
@@ -45,13 +45,8 @@ class Entity {
         SDL_FlipMode flipMode() const { return m_flag; }
         void setFlipMode(SDL_FlipMode mode) { m_flag = mode; }
 
-        virtual void turnLeft() = 0;
-        virtual void turnRight() = 0;
-        virtual void turnUp() = 0;
-        virtual void turnDown() = 0;
-
         // FPS of the animation of player
-        static constexpr double targetFPS {24.0};
+        static constexpr double targetFPS {30.0};
         // Total Number of Frames in the sprite sheet
         static constexpr Index frameCount {4};
         // All rendered entites in 32x32 space
@@ -75,8 +70,8 @@ class Entity {
         SDL_FlipMode m_flag{};
         // Rectangle on the screen to put the Entity in
         SDL_FRect m_dst {
-            .x = static_cast<float> ((GameConfig::g_logicalWidth - size())/2.0f),
-            .y = static_cast<float> ((GameConfig::g_logicalHeight - size())/2.0f),
+            .x = static_cast<float> (GameConfig::g_logicalWidth - size())/2.0f,
+            .y = static_cast<float> (GameConfig::g_logicalHeight - size())/2.0f,
             .w = static_cast<float> (size()),
             .h = static_cast<float> (size()),
         };

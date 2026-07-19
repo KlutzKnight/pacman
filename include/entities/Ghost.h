@@ -59,14 +59,11 @@ class Ghost : public Entity {
             // eaten
         };
 
-        void turnLeft() override { setFlipMode(SDL_FLIP_NONE); }
-        void turnRight() override { setFlipMode(SDL_FLIP_HORIZONTAL); }
-        void turnUp() override { m_currentFrame = 1; }
-        void turnDown() override { m_currentFrame = 2; }
         void chooseDirection(Graph graph);
         bool atTileCenter() const;
 
         void makeFrames() override;
+        void advanceFrame(double deltaTime) override;
         void move(const double deltaTime);
         const State& currentState() const { return m_currentState; }
         void changeState(const double deltaTime);

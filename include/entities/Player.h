@@ -27,10 +27,10 @@ class Player : public Entity {
         // Speed of the Entity in Pixels per second
         static constexpr int speed {128};
 
-        void turnLeft() override;
-        void turnRight() override;
-        void turnUp() override;
-        void turnDown() override;
+        void turnLeft();
+        void turnRight();
+        void turnUp();
+        void turnDown();
 
         void makeFrames() override;
         void resetFrame() { m_currentFrame = 0; }
