@@ -8,6 +8,7 @@
 
 #include "AssetManager.h"
 #include "Ghost.h"
+#include "Item.h"
 #include "Map.h"
 #include "Navigation.h"
 #include "Player.h"
@@ -32,6 +33,7 @@ class WorldState : public GameState {
         std::array<Ghost, 4> m_ghosts;
         Map m_map;
         Graph m_graph;
+        std::array<Item, 3> m_items;
 };
 
 

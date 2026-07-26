@@ -16,10 +16,11 @@ target_sources(pacman
     entities/Entity.cpp
     entities/Player.cpp
     entities/Ghost.cpp
+    entities/Item.cpp
     game/Map.cpp
     game/Navigation.cpp
-    game/WorldState.cpp
-    game/IntroState.cpp
+    game/states/WorldState.cpp
+    game/states/IntroState.cpp
 )
 
 target_compile_options(pacman
@@ -38,4 +39,5 @@ target_include_directories(pacman
     ${PROJECT_SOURCE_DIR}/include/core
     ${PROJECT_SOURCE_DIR}/include/entities
     ${PROJECT_SOURCE_DIR}/include/game
+    ${PROJECT_SOURCE_DIR}/include/game/states
 )

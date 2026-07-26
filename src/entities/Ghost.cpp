@@ -3,6 +3,8 @@
 #include "Map.h"
 #include "Navigation.h"
 
+#include <SDL3/SDL_render.h>
+#include <SDL3/SDL_stdinc.h>
 #include <algorithm>
 #include <stdexcept>
 
@@ -16,21 +18,25 @@ void Ghost::makeFrames() {
         case Name::blinky:
         {
             locationY = 0;
+            m_faceSourceRect.insert({Name::blinky, {0,320,16,16}});
             break;
         }
         case Name::inky:
         {
             locationY = 32;
+            m_faceSourceRect.insert({Name::inky, {16,320,16,16}});
             break;
         }
         case Name::pinky:
         {
             locationY = 64;
+            m_faceSourceRect.insert({Name::pinky, {32,320,16,16}});
             break;
         }
         case Name::clyde:
         {
             locationY = 96;
+            m_faceSourceRect.insert({Name::clyde, {48,320,16,16}});
             break;
         }
         default:
@@ -47,35 +53,48 @@ void Ghost::makeFrames() {
             .w = g_spriteSize,
             .h = g_spriteSize
         });
+
+        m_frightenedSrcRect.emplace_back( 
+            SDL_FRect {
+            .x = static_cast<float>(g_entitySize * i),
+            .y = 256,
+            .w = g_spriteSize,
+            .h = g_spriteSize
+        }); 
+
+        m_eatenSrcRect.emplace_back( 
+            SDL_FRect {
+            .x = static_cast<float>(g_entitySize * i),
+            .y = 288,
+            .w = g_spriteSize,
+            .h = g_spriteSize
+        }); 
     }
 }
 
-void Ghost::update(const double deltaTime, Graph graph, Map map, const Ghost& blinky) {
+void Ghost::update(const double deltaTime, Graph& graph, Map& map, const Ghost& blinky) {
     // Move based on the current state
     switch(currentState()) {
         case State::chase:
         {
-            turnNormal();
             setCurrentTarget(blinky);
             break;
         }
         case State::scatter:
         {
-            turnNormal();
             setCornerTarget();
             break;
         }
-        // case State::frightened:
-        // {
-        //     turnFrightened();
-        //     break;
-        // }
-        // case State::eaten:
-        // {
-        //     turnInvisible();
-        //     setGhostHouseTarget();
-        //     break;
-        // }
+        case State::frightened:
+        {
+            // DO THIS!!!
+            break;
+        }
+        case State::eaten:
+        {
+            setGhostHouseTarget();
+            break;
+        }
     }
     m_currentTarget.x = std::clamp(
         m_currentTarget.x,
@@ -96,10 +115,45 @@ void Ghost::update(const double deltaTime, Graph graph, Map map, const Ghost& bl
     if(atTileCenter()) {
         chooseDirection(graph);
     }
-    move(deltaTime);
+
+    m_timeLeft -= deltaTime;
+    if(m_dotsUntilFreed <= 0 || m_timeLeft <= 0.0) {
+        move(deltaTime);
+        m_dotsUntilFreed = 0;
+        m_timeLeft = 0.0;
+    }
     advanceFrame(deltaTime);
     // Change state if needed
     changeState(deltaTime);
+}
+void Ghost::render(SDL_Renderer *renderer) {
+    switch(currentState()) {
+        case State::chase:
+        case State::scatter:
+        {
+            // Draw the body calling the parent draw function
+            draw(texture(), renderer);
+            // Draw the face centered manually
+            SDL_FRect faceDestRect (destinationRect());
+            // Pretty Arbitrary values to center the face properly
+            faceDestRect.x += 12;
+            faceDestRect.y += 10;
+            faceDestRect.w = 20;
+            faceDestRect.h = 20;
+            SDL_RenderTexture(renderer, texture(), &m_faceSourceRect.at(m_ghostName), &faceDestRect);
+            break;
+        }
+        case State::frightened:
+        {
+            SDL_RenderTexture(renderer, texture(), &m_frightenedSrcRect.at(m_currentFrame), &destinationRect());
+            break;
+        }
+        case State::eaten:
+        {
+            SDL_RenderTexture(renderer, texture(), &m_eatenSrcRect.at(m_currentFrame), &destinationRect());
+            break;
+        }
+    }
 }
 
 void Ghost::setCurrentTarget(const Ghost& blinky) {

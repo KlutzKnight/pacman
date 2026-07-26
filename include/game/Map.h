@@ -24,15 +24,17 @@ class Map {
             : m_mapTexture {assets.getTexture("Map")}
         {
             loadClassicMap();
-            make_frames();
+            makeFrames();
         }
 
         void draw(SDL_Renderer* renderer);
-        bool isWalkable (int x, int y) const;
+        bool isWalkable(int x, int y) const;
+        bool isGivenTile(int x, int y, char tile);
 
     private:
         enum class TileType {
             empty,
+            gate,
             horizontal,
             vertical,
             topLeft,
@@ -52,7 +54,7 @@ class Map {
         SDL_Rect& destination() { return m_dst; }
         SDL_FRect destinationRect();
         SDL_FRect sourceRect();
-        void make_frames();
+        void makeFrames();
         SDL_Texture* texture();
 
         const Texture& m_mapTexture;
@@ -67,8 +69,8 @@ class Map {
             {'7', TileType::topRight},
             {'L', TileType::bottomLeft},
             {'J', TileType::bottomRight},
+            {'G', TileType::gate}
         };
-
 
         // Rectangle on the screen to put each tile in
         SDL_Rect m_dst {

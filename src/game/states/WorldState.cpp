@@ -1,6 +1,7 @@
 #include "WorldState.h"
 
 #include "Entity.h"
+#include "Ghost.h"
 #include "Renderer.h"
 
 // Private constructor
@@ -14,6 +15,11 @@ WorldState::WorldState(AssetManager& assets)
 	}}
     , m_map {assets}
 	, m_graph {m_map}
+	, m_items {{
+	    {assets, 240, Item::ItemType::dot,      m_map},
+	    {assets, 4, Item::ItemType::powerPellet,m_map},
+		{assets, 2, Item::ItemType::cherry,     m_map}
+	}}
 {
 }
 
@@ -24,6 +30,16 @@ void WorldState::update(double deltaTime, const bool* keyboardState) {
 		m_player.stop();
 	}
 
+	for(auto& item: m_items) {
+	    // Returns true if an item is eaten
+	    if(item.update(m_player)) {
+	        for(auto& ghost: m_ghosts) {
+			    ghost.decDotTimer();
+			    ghost.resetTimer();
+			}
+		}
+	}
+	
 	for(auto& ghost: m_ghosts) {
 		if(m_ghosts[0].name() == Ghost::Name::blinky) {
 			ghost.update(deltaTime, m_graph, m_map, m_ghosts[0]);
@@ -47,6 +63,9 @@ void WorldState::render(Renderer& renderer) {
 	SDL_RenderClear(renderer.get());
 
 	m_map.draw(renderer.get());
+	for(auto& item: m_items) {
+	    item.render(renderer.get());
+	}
 	m_player.render(renderer.get());
 	for(auto& ghost: m_ghosts) {
 		ghost.render(renderer.get());

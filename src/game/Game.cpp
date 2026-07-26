@@ -1,7 +1,5 @@
 #include "Game.h"
 
-#include <memory>
-
 #include <SDL3/SDL.h>
 
 #include "AssetManager.h"
