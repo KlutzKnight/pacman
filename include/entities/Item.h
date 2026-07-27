@@ -17,7 +17,6 @@ class Item {
         enum ItemType {
             dot,
             powerPellet,
-            cherry,
         };
         Item(AssetManager& assets, int n, ItemType item, Map& map)
             : m_maxNumItems {n}

@@ -18,7 +18,6 @@ WorldState::WorldState(AssetManager& assets)
 	, m_items {{
 	    {assets, 240, Item::ItemType::dot,      m_map},
 	    {assets, 4, Item::ItemType::powerPellet,m_map},
-		{assets, 2, Item::ItemType::cherry,     m_map}
 	}}
 {
 }

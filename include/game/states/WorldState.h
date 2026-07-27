@@ -33,7 +33,7 @@ class WorldState : public GameState {
         std::array<Ghost, 4> m_ghosts;
         Map m_map;
         Graph m_graph;
-        std::array<Item, 3> m_items;
+        std::array<Item, 2> m_items;
 };
 
 

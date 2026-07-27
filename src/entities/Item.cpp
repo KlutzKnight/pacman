@@ -25,10 +25,6 @@ void Item::render(SDL_Renderer* renderer) {
                 continue;
             }
 
-            if(m_itemType == cherry && m_dotsUntilSpawned != 0) {
-                continue;
-            }
-
             dstrect = {
                 static_cast<float>(i * GameConfig::g_tileSize),
                 static_cast<float>(j * GameConfig::g_tileSize),
@@ -54,9 +50,5 @@ void Item::makeRect() {
     m_srcrect.insert({
         ItemType::powerPellet,
         {16,16,16,16}
-    });
-    m_srcrect.insert({
-        ItemType::cherry,
-        {0,0,16,16}
     });
 }
