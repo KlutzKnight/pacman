@@ -41,13 +41,13 @@ Many of these would have been fun additions, but they would have shifted the pro
 ## Building
 
 ```bash
-cmake -B build
+cmake --preset release
 cmake --build build
 ```
 
 Run the generated executable after the build completes.
 ```
-build/src/pacman
+build/release/src/pacman
 ```
 
 ---
