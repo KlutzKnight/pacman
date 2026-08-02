@@ -39,9 +39,11 @@ Many of these would have been fun additions, but they would have shifted the pro
 ---
 
 ## Dependencies
-* sd3
-* sdl3_image
-* sdl3_ttf
+```bash
+sd3
+sdl3_image
+sdl3_ttf
+```
 
 ## Building
 
