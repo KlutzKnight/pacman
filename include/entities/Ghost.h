@@ -61,6 +61,7 @@ class Ghost : public Entity {
             else {
                 throw std::runtime_error("Error: Invalid name");
             }
+            m_timeLeft = m_timeUntilFreed;
 
             makeFrames();
         }
